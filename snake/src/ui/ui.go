@@ -5,6 +5,9 @@ import (
 
 	"github.com/ebitenui/ebitenui"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/mbtamuli/ai-playground/snake/src/game"
+	"github.com/mbtamuli/ai-playground/snake/src/ui/resources"
 )
 
 var (
@@ -13,12 +16,36 @@ var (
 
 // UIManager handles the UI state and screen switching
 type UIManager struct {
-	currentUI *ebitenui.UI
+	currentUI       *ebitenui.UI
+	gameManager     *game.GameManager
+	Fonts           *resources.Fonts
+	ButtonResources *resources.ButtonResources
+	SliderResources *resources.SliderResources
 }
 
 // NewUIManager creates a new UI manager instance
-func NewUIManager() *UIManager {
-	manager := &UIManager{}
+func NewUIManager(gameManager *game.GameManager) *UIManager {
+	fonts, err := resources.SetupFontSystem()
+	if err != nil {
+		panic(err)
+	}
+
+	button, err := resources.CreateButtonResources(fonts)
+	if err != nil {
+		panic(err)
+	}
+
+	slider, err := resources.CreateSliderResources(fonts)
+	if err != nil {
+		panic(err)
+	}
+
+	manager := &UIManager{
+		gameManager:     gameManager,
+		Fonts:           fonts,
+		ButtonResources: button,
+		SliderResources: slider,
+	}
 	manager.ShowStartScreen()
 	return manager
 }
@@ -26,6 +53,11 @@ func NewUIManager() *UIManager {
 // ShowStartScreen switches to the start screen
 func (m *UIManager) ShowStartScreen() {
 	m.currentUI = createStartScreen(m)
+}
+
+// ShowStartScreen switches to the start screen
+func (m *UIManager) ShowGameScreen() {
+	m.currentUI = createGameScreen(m)
 }
 
 // ShowHelpScreen switches to the help screen

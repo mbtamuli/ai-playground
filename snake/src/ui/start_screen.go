@@ -2,7 +2,6 @@ package ui
 
 import (
 	"image/color"
-	"log"
 
 	"github.com/ebitenui/ebitenui"
 	eimage "github.com/ebitenui/ebitenui/image"
@@ -13,35 +12,16 @@ import (
 // createStartScreen creates the start screen UI
 func createStartScreen(manager *UIManager) *ebitenui.UI {
 	ui := &ebitenui.UI{}
-	fonts, button, err := initializeResources()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	rootContainer := createRootContainer()
-	title := createTitle(fonts)
-	buttonContainer := createButtonContainer(button, fonts, manager)
+	title := createTitle(manager.Fonts)
+	buttonContainer := createButtonContainer(manager)
 
 	rootContainer.AddChild(title)
 	rootContainer.AddChild(buttonContainer)
 	ui.Container = rootContainer
 
 	return ui
-}
-
-// initializeResources loads and returns the required fonts and button resources
-func initializeResources() (*resources.Fonts, *resources.ButtonResources, error) {
-	fonts, err := resources.SetupFontSystem()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	button, err := resources.CreateButtonResources(fonts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return fonts, button, nil
 }
 
 // createRootContainer creates the main container for the start screen
@@ -73,7 +53,7 @@ func createTitle(fonts *resources.Fonts) *widget.Text {
 }
 
 // createButtonContainer creates a container with the game buttons
-func createButtonContainer(button *resources.ButtonResources, fonts *resources.Fonts, manager *UIManager) *widget.Container {
+func createButtonContainer(manager *UIManager) *widget.Container {
 	buttonContainer := widget.NewContainer(
 		widget.ContainerOpts.Layout(widget.NewRowLayout(
 			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
@@ -90,11 +70,12 @@ func createButtonContainer(button *resources.ButtonResources, fonts *resources.F
 		),
 	)
 
-	startButton := createGameButton(button, "Start Game", func(args *widget.ButtonClickedEventArgs) {
-		log.Println("Start Game button clicked")
+	startButton := createGameButton(manager.ButtonResources, "Start Game", func(args *widget.ButtonClickedEventArgs) {
+		//log.Println("Start Game button clicked")
+		manager.ShowGameScreen()
 	})
 
-	helpButton := createGameButton(button, "Help", func(args *widget.ButtonClickedEventArgs) {
+	helpButton := createGameButton(manager.ButtonResources, "Help", func(args *widget.ButtonClickedEventArgs) {
 		manager.ShowHelpScreen()
 	})
 

@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"image/color"
-	"log"
 
 	"github.com/ebitenui/ebitenui"
 	"github.com/ebitenui/ebitenui/image"
@@ -14,10 +13,6 @@ import (
 // createHelpScreen creates the help screen UI
 func createHelpScreen(manager *UIManager) *ebitenui.UI {
 	ui := &ebitenui.UI{}
-	fonts, button, err := initializeResources()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	rootContainer := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(gray)),
@@ -31,12 +26,12 @@ func createHelpScreen(manager *UIManager) *ebitenui.UI {
 		)),
 	)
 
-	helpContent := createHelpContent(fonts)
-	backButton := createGameButton(button, "Back to Menu", func(args *widget.ButtonClickedEventArgs) {
+	helpContent := createHelpContent(manager.Fonts)
+	backButton := createGameButton(manager.ButtonResources, "Back to Menu", func(args *widget.ButtonClickedEventArgs) {
 		manager.ShowStartScreen()
 	})
 
-	rootContainer.AddChild(createHelpTitleBar(fonts))
+	rootContainer.AddChild(createHelpTitleBar(manager.Fonts))
 	rootContainer.AddChild(helpContent)
 	rootContainer.AddChild(backButton)
 

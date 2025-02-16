@@ -11,9 +11,9 @@ import (
 //go:embed assets/*
 var embeddedAssets embed.FS
 
-// LoadEbitenImageFromAsset loads an image from the embedded assets and returns
+// loadEbitenImageFromAsset loads an image from the embedded assets and returns
 // an ebiten.Image that can be used for rendering
-func LoadEbitenImageFromAsset(assetPath string) (*ebiten.Image, error) {
+func loadEbitenImageFromAsset(assetPath string) (*ebiten.Image, error) {
 	assetFile, err := embeddedAssets.Open(assetPath)
 	if err != nil {
 		return nil, err
@@ -23,10 +23,10 @@ func LoadEbitenImageFromAsset(assetPath string) (*ebiten.Image, error) {
 	return ebitenImage, err
 }
 
-// CreateScalableNineSliceImage creates a nine-slice image from a source image file
+// createScalableNineSliceImage creates a nine-slice image from a source image file
 // with specified center dimensions for proper scaling
-func CreateScalableNineSliceImage(assetPath string, sliceCenterWidth int, sliceCenterHeight int) (*eimage.NineSlice, error) {
-	sourceImage, err := LoadEbitenImageFromAsset(assetPath)
+func createScalableNineSliceImage(assetPath string, sliceCenterWidth int, sliceCenterHeight int) (*eimage.NineSlice, error) {
+	sourceImage, err := loadEbitenImageFromAsset(assetPath)
 	if err != nil {
 		return nil, err
 	}

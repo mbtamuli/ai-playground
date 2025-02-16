@@ -23,12 +23,12 @@ type ButtonResources struct {
 // CreateButtonResources creates a new button resources instance with the
 // specified fonts and returns all necessary components for button rendering
 func CreateButtonResources(fontSet *Fonts) (*ButtonResources, error) {
-	idleButtonImage, err := CreateScalableNineSliceImage(idleButton, 12, 0)
+	idleButtonImage, err := createScalableNineSliceImage(idleButton, 12, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	pressedButtonImage, err := CreateScalableNineSliceImage(pressedButton, 12, 0)
+	pressedButtonImage, err := createScalableNineSliceImage(pressedButton, 12, 0)
 	if err != nil {
 		return nil, err
 	}
