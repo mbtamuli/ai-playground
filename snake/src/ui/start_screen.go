@@ -12,10 +12,11 @@ import (
 
 func StartScreen() *ebitenui.UI {
 	ui := &ebitenui.UI{}
-	// construct a new container that serves as the root of the UI hierarchy
 	rootContainer := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(eimage.NewNineSliceColor(color3)),
-		widget.ContainerOpts.Layout(widget.NewRowLayout(widget.RowLayoutOpts.Direction(widget.DirectionVertical))),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
+			widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(30)),
+		)),
 	)
 
 	buttonImage, err := loadButtonImage()
@@ -30,9 +31,19 @@ func StartScreen() *ebitenui.UI {
 
 	title := widget.NewText(
 		widget.TextOpts.Text(
-			"Welcome to Snake Game - AI playground",
+			"Snake Game",
 			face,
-			color.Black,
+			color.White,
+		),
+		widget.TextOpts.Position(
+			widget.TextPositionStart,
+			widget.TextPositionStart,
+		),
+		widget.TextOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionStart,
+			}),
 		),
 	)
 
@@ -47,6 +58,12 @@ func StartScreen() *ebitenui.UI {
 		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
 			log.Println("Start Game button clicked")
 		}),
+		widget.ButtonOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+		),
 	)
 
 	// Create a "Start game" button
@@ -72,9 +89,28 @@ func StartScreen() *ebitenui.UI {
 		}),
 	)
 
+	// Create a centered container for buttons
+	buttonContainer := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewRowLayout(
+			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+			widget.RowLayoutOpts.Spacing(10),
+			widget.RowLayoutOpts.Padding(widget.Insets{
+				Top:    20,
+				Bottom: 20,
+			}),
+		)),
+		widget.ContainerOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+		),
+	)
+
 	rootContainer.AddChild(title)
-	rootContainer.AddChild(startButton)
-	rootContainer.AddChild(helpButton)
+	buttonContainer.AddChild(startButton)
+	buttonContainer.AddChild(helpButton)
+	rootContainer.AddChild(buttonContainer)
 
 	ui.Container = rootContainer
 
