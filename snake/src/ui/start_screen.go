@@ -12,19 +12,25 @@ import (
 
 func StartScreen() *ebitenui.UI {
 	ui := &ebitenui.UI{}
+
 	rootContainer := widget.NewContainer(
-		widget.ContainerOpts.BackgroundImage(eimage.NewNineSliceColor(color3)),
-		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
-			widget.AnchorLayoutOpts.Padding(widget.NewInsetsSimple(30)),
+		widget.ContainerOpts.BackgroundImage(eimage.NewNineSliceColor(gray)),
+		widget.ContainerOpts.Layout(widget.NewRowLayout(
+			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+			widget.RowLayoutOpts.Spacing(10),
+			widget.RowLayoutOpts.Padding(widget.Insets{
+				Top: 20, Bottom: 20,
+				Left: 20, Right: 20,
+			}),
 		)),
 	)
 
-	buttonImage, err := loadButtonImage()
+	fonts, err := loadFonts()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	face, err := loadFont(20)
+	button, err := newButtonResources(fonts)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,48 +38,46 @@ func StartScreen() *ebitenui.UI {
 	title := widget.NewText(
 		widget.TextOpts.Text(
 			"Snake Game",
-			face,
-			color.White,
+			fonts.titleFace,
+			color.Black,
 		),
 		widget.TextOpts.Position(
 			widget.TextPositionStart,
 			widget.TextPositionStart,
 		),
 		widget.TextOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-				HorizontalPosition: widget.AnchorLayoutPositionCenter,
-				VerticalPosition:   widget.AnchorLayoutPositionStart,
+			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+				Position: widget.RowLayoutPositionCenter,
 			}),
 		),
 	)
 
+	buttonTextColor := &widget.ButtonTextColor{
+		Idle:    color.Black,
+		Pressed: color.Black,
+	}
+
 	// Create a "Start game" button
 	startButton := widget.NewButton(
-		widget.ButtonOpts.Text("Start Game", face, &widget.ButtonTextColor{
-			Idle:    color2,
-			Hover:   color4,
-			Pressed: color1,
-		}),
-		widget.ButtonOpts.Image(buttonImage),
+		widget.ButtonOpts.Text("Start Game", button.face, buttonTextColor),
+		widget.ButtonOpts.Image(button.image),
 		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
 			log.Println("Start Game button clicked")
 		}),
+		widget.ButtonOpts.TextPadding(widget.Insets{Left: 20, Right: 20}),
 		widget.ButtonOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-				HorizontalPosition: widget.AnchorLayoutPositionCenter,
-				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+				Position: widget.RowLayoutPositionCenter,
+				Stretch:  true,
 			}),
 		),
 	)
 
 	// Create a "Start game" button
 	helpButton := widget.NewButton(
-		widget.ButtonOpts.Text("Help", face, &widget.ButtonTextColor{
-			Idle:    color2,
-			Hover:   color4,
-			Pressed: color1,
-		}),
-		widget.ButtonOpts.Image(buttonImage),
+		widget.ButtonOpts.Text("Help", button.face, buttonTextColor),
+		widget.ButtonOpts.Image(button.image),
+		widget.ButtonOpts.TextPadding(widget.Insets{Left: 20, Right: 20}),
 		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
 			window := helpScreenWindow()
 			//Get the preferred size of the content
@@ -87,6 +91,12 @@ func StartScreen() *ebitenui.UI {
 
 			ui.AddWindow(window)
 		}),
+		widget.ButtonOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+				Position: widget.RowLayoutPositionCenter,
+				Stretch:  true,
+			}),
+		),
 	)
 
 	// Create a centered container for buttons
@@ -100,9 +110,9 @@ func StartScreen() *ebitenui.UI {
 			}),
 		)),
 		widget.ContainerOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-				HorizontalPosition: widget.AnchorLayoutPositionCenter,
-				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+				Position: widget.RowLayoutPositionCenter,
+				Stretch:  true,
 			}),
 		),
 	)

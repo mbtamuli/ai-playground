@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"image/color"
+	"log"
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
@@ -10,15 +11,14 @@ import (
 
 func helpScreenWindow() *widget.Window {
 
-	// load button text font
-	face, _ := loadFont(16)
-
-	// load the font for the window title
-	titleFace, _ := loadFont(20)
+	fonts, err := loadFonts()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create the contents of the window
 	windowContainer := widget.NewContainer(
-		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(color.NRGBA{236, 236, 236, 255})),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(gray)),
 		widget.ContainerOpts.Layout(widget.NewRowLayout(
 			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
 			widget.RowLayoutOpts.Spacing(10),
@@ -41,7 +41,7 @@ func helpScreenWindow() *widget.Window {
 
 	for _, instruction := range instructions {
 		windowContainer.AddChild(widget.NewText(
-			widget.TextOpts.Text(instruction, face, color.Black),
+			widget.TextOpts.Text(instruction, fonts.face, color.Black),
 		))
 	}
 
@@ -51,7 +51,7 @@ func helpScreenWindow() *widget.Window {
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
 	)
 	titleContainer.AddChild(widget.NewText(
-		widget.TextOpts.Text("Game Instructions", titleFace, color.Black),
+		widget.TextOpts.Text("Game Instructions", fonts.titleFace, color.Black),
 		widget.TextOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			HorizontalPosition: widget.AnchorLayoutPositionCenter,
 			VerticalPosition:   widget.AnchorLayoutPositionCenter,

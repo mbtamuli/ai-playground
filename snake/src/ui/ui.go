@@ -1,25 +1,39 @@
 package ui
 
 import (
-	"bytes"
 	"image/color"
 	"log"
 
 	eimage "github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
-	"golang.org/x/image/font/gofont/goregular"
+)
+
+const (
+	fontFaceRegular = "assets/Font/kenney-future.ttf"
+	fontFaceNarrow  = "assets/Font/kenney-future-narrow.ttf"
 )
 
 var (
-	color1 = color.NRGBA{239, 121, 138, 255} // #ef798a
-	color2 = color.NRGBA{247, 169, 168, 255} // #f7a9a8
-	color3 = color.NRGBA{97, 63, 117, 255}   // #613f75
-	color4 = color.NRGBA{229, 195, 209, 255} // #e5c3d1
+	gray = color.NRGBA{238, 244, 247, 255} // #eef4f7
 )
 
-func loadFont(size float64) (text.Face, error) {
-	s, err := text.NewGoTextFaceSource(bytes.NewReader(goregular.TTF))
+type buttonResources struct {
+	image   *widget.ButtonImage
+	text    *widget.ButtonTextColor
+	face    text.Face
+	padding widget.Insets
+}
+
+func loadFont(path string, size float64) (text.Face, error) {
+	fontFile, err := embeddedAssets.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := text.NewGoTextFaceSource(fontFile)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -31,12 +45,94 @@ func loadFont(size float64) (text.Face, error) {
 	}, nil
 }
 
-func loadButtonImage() (*widget.ButtonImage, error) {
-	transparent := eimage.NewNineSliceColor(color.Transparent)
+func newImageFromFile(path string) (*ebiten.Image, error) {
+	f, err := embeddedAssets.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	i, _, err := ebitenutil.NewImageFromReader(f)
+	return i, err
+}
 
-	return &widget.ButtonImage{
-		Idle:    transparent,
-		Hover:   transparent,
-		Pressed: transparent,
+func loadImageNineSlice(path string, centerWidth int, centerHeight int) (*eimage.NineSlice, error) {
+	i, err := newImageFromFile(path)
+	if err != nil {
+		return nil, err
+	}
+	w := i.Bounds().Dx()
+	h := i.Bounds().Dy()
+	return eimage.NewNineSlice(i,
+			[3]int{(w - centerWidth) / 2, centerWidth, w - (w-centerWidth)/2 - centerWidth},
+			[3]int{(h - centerHeight) / 2, centerHeight, h - (h-centerHeight)/2 - centerHeight}),
+		nil
+}
+
+func newButtonResources(fonts *fonts) (*buttonResources, error) {
+	idle, err := loadImageNineSlice("assets/PNG/Extra/Default/button_rectangle_line.png", 12, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	pressed, err := loadImageNineSlice("assets/PNG/Extra/Default/button_rectangle_depth_line.png", 12, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	i := &widget.ButtonImage{
+		Idle:    idle,
+		Pressed: pressed,
+	}
+
+	return &buttonResources{
+		image: i,
+
+		text: &widget.ButtonTextColor{
+			Idle:    color.Black,
+			Pressed: color.Black,
+		},
+
+		face: fonts.face,
+
+		padding: widget.Insets{
+			Left:  30,
+			Right: 30,
+		},
+	}, nil
+}
+
+type fonts struct {
+	bigTitleFace text.Face
+	face         text.Face
+	titleFace    text.Face
+	toolTipFace  text.Face
+}
+
+func loadFonts() (*fonts, error) {
+	bigTitleFace, err := loadFont(fontFaceRegular, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	fontFace, err := loadFont(fontFaceRegular, 20)
+	if err != nil {
+		return nil, err
+	}
+
+	titleFace, err := loadFont(fontFaceNarrow, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	toolTipFace, err := loadFont(fontFaceNarrow, 20)
+	if err != nil {
+		return nil, err
+	}
+
+	return &fonts{
+		bigTitleFace: bigTitleFace,
+		face:         fontFace,
+		titleFace:    titleFace,
+		toolTipFace:  toolTipFace,
 	}, nil
 }
