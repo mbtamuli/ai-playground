@@ -1,19 +1,52 @@
 package ui
 
 import (
-	"image"
 	"image/color"
 	"log"
 
 	"github.com/ebitenui/ebitenui"
 	eimage "github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
+	"github.com/mbtamuli/ai-playground/snake/src/ui/resources"
 )
 
-func StartScreen() *ebitenui.UI {
+// createStartScreen creates the start screen UI
+func createStartScreen(manager *UIManager) *ebitenui.UI {
 	ui := &ebitenui.UI{}
+	fonts, button, err := initializeResources()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	rootContainer := widget.NewContainer(
+	rootContainer := createRootContainer()
+	title := createTitle(fonts)
+	buttonContainer := createButtonContainer(button, fonts, manager)
+
+	rootContainer.AddChild(title)
+	rootContainer.AddChild(buttonContainer)
+	ui.Container = rootContainer
+
+	return ui
+}
+
+// initializeResources loads and returns the required fonts and button resources
+func initializeResources() (*resources.Fonts, *resources.ButtonResources, error) {
+	fonts, err := resources.SetupFontSystem()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	button, err := resources.CreateButtonResources(fonts)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return fonts, button, nil
+}
+
+// createRootContainer creates the main container for the start screen
+func createRootContainer() *widget.Container {
+	return widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(eimage.NewNineSliceColor(gray)),
 		widget.ContainerOpts.Layout(widget.NewRowLayout(
 			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
@@ -24,89 +57,29 @@ func StartScreen() *ebitenui.UI {
 			}),
 		)),
 	)
+}
 
-	fonts, err := loadFonts()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	button, err := newButtonResources(fonts)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	title := widget.NewText(
-		widget.TextOpts.Text(
-			"Snake Game",
-			fonts.titleFace,
-			color.Black,
-		),
-		widget.TextOpts.Position(
-			widget.TextPositionStart,
-			widget.TextPositionStart,
-		),
+// createTitle creates the game title widget
+func createTitle(fonts *resources.Fonts) *widget.Text {
+	return widget.NewText(
+		widget.TextOpts.Text("Snake Game", fonts.TitleFace, color.Black),
+		widget.TextOpts.Position(widget.TextPositionStart, widget.TextPositionStart),
 		widget.TextOpts.WidgetOpts(
 			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
 				Position: widget.RowLayoutPositionCenter,
 			}),
 		),
 	)
+}
 
-	buttonTextColor := &widget.ButtonTextColor{
-		Idle:    color.Black,
-		Pressed: color.Black,
-	}
-
-	// Create a "Start game" button
-	startButton := widget.NewButton(
-		widget.ButtonOpts.Text("Start Game", button.face, buttonTextColor),
-		widget.ButtonOpts.Image(button.image),
-		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
-			log.Println("Start Game button clicked")
-		}),
-		widget.ButtonOpts.TextPadding(widget.Insets{Left: 20, Right: 20}),
-		widget.ButtonOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
-				Position: widget.RowLayoutPositionCenter,
-				Stretch:  true,
-			}),
-		),
-	)
-
-	// Create a "Start game" button
-	helpButton := widget.NewButton(
-		widget.ButtonOpts.Text("Help", button.face, buttonTextColor),
-		widget.ButtonOpts.Image(button.image),
-		widget.ButtonOpts.TextPadding(widget.Insets{Left: 20, Right: 20}),
-		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
-			window := helpScreenWindow()
-			//Get the preferred size of the content
-			x, y := window.Contents.PreferredSize()
-			//Create a rect with the preferred size of the content
-			r := image.Rect(0, 0, x, y)
-			//Use the Add method to move the window to the specified point
-			r = r.Add(image.Point{100, 50})
-			//Set the windows location to the rect.
-			window.SetLocation(r)
-
-			ui.AddWindow(window)
-		}),
-		widget.ButtonOpts.WidgetOpts(
-			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
-				Position: widget.RowLayoutPositionCenter,
-				Stretch:  true,
-			}),
-		),
-	)
-
-	// Create a centered container for buttons
+// createButtonContainer creates a container with the game buttons
+func createButtonContainer(button *resources.ButtonResources, fonts *resources.Fonts, manager *UIManager) *widget.Container {
 	buttonContainer := widget.NewContainer(
 		widget.ContainerOpts.Layout(widget.NewRowLayout(
 			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
 			widget.RowLayoutOpts.Spacing(10),
 			widget.RowLayoutOpts.Padding(widget.Insets{
-				Top:    20,
-				Bottom: 20,
+				Top: 20, Bottom: 20,
 			}),
 		)),
 		widget.ContainerOpts.WidgetOpts(
@@ -117,12 +90,36 @@ func StartScreen() *ebitenui.UI {
 		),
 	)
 
-	rootContainer.AddChild(title)
+	startButton := createGameButton(button, "Start Game", func(args *widget.ButtonClickedEventArgs) {
+		log.Println("Start Game button clicked")
+	})
+
+	helpButton := createGameButton(button, "Help", func(args *widget.ButtonClickedEventArgs) {
+		manager.ShowHelpScreen()
+	})
+
 	buttonContainer.AddChild(startButton)
 	buttonContainer.AddChild(helpButton)
-	rootContainer.AddChild(buttonContainer)
+	return buttonContainer
+}
 
-	ui.Container = rootContainer
+// createGameButton creates a button with standard styling
+func createGameButton(button *resources.ButtonResources, text string, handler func(*widget.ButtonClickedEventArgs)) *widget.Button {
+	buttonTextColor := &widget.ButtonTextColor{
+		Idle:    color.Black,
+		Pressed: color.Black,
+	}
 
-	return ui
+	return widget.NewButton(
+		widget.ButtonOpts.Text(text, button.Face, buttonTextColor),
+		widget.ButtonOpts.Image(button.Image),
+		widget.ButtonOpts.ClickedHandler(handler),
+		widget.ButtonOpts.TextPadding(widget.Insets{Left: 20, Right: 20}),
+		widget.ButtonOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
+				Position: widget.RowLayoutPositionCenter,
+				Stretch:  true,
+			}),
+		),
+	)
 }
