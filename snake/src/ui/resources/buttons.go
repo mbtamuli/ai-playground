@@ -44,7 +44,7 @@ func CreateButtonResources(fontSet *Fonts) (*ButtonResources, error) {
 			Idle:    color.Black,
 			Pressed: color.Black,
 		},
-		Face: fontSet.Face,
+		Face: fontSet.TitleFace,
 		Padding: widget.Insets{
 			Left:  30,
 			Right: 30,

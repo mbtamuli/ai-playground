@@ -37,3 +37,14 @@ func createScalableNineSliceImage(assetPath string, sliceCenterWidth int, sliceC
 			[3]int{(imageHeight - sliceCenterHeight) / 2, sliceCenterHeight, imageHeight - (imageHeight-sliceCenterHeight)/2 - sliceCenterHeight}),
 		nil
 }
+
+func createScalableNineSliceImageHandle(assetPath string) (*eimage.NineSlice, error) {
+	sourceImage, err := loadEbitenImageFromAsset(assetPath)
+	if err != nil {
+		return nil, err
+	}
+	return eimage.NewNineSlice(sourceImage,
+			[3]int{0, 24, 0},
+			[3]int{0, 32, 0}),
+		nil
+}

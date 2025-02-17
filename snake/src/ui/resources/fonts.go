@@ -38,7 +38,7 @@ func initFontFace(fontPath string, fontSize float64) (text.Face, error) {
 
 // SetupFontSystem initializes and returns the font collection needed for the UI
 func SetupFontSystem() (*Fonts, error) {
-	defaultFont, err := initFontFace(fontFaceRegular, 20)
+	defaultFont, err := initFontFace(fontFaceRegular, 12)
 	if err != nil {
 		return nil, err
 	}

@@ -1,43 +1,37 @@
 package resources
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/ebitenui/ebitenui/widget"
 )
 
 const (
-	slideHandle                         = "assets/PNG/Blue/Default/slide_hangle.png"
-	slide_horizontal_color_section_wide = "assets/PNG/Blue/Default/slide_horizontal_color_section_wide.png"
-	slide_horizontal_color_section      = "assets/PNG/Blue/Default/slide_horizontal_color_section.png"
-	slideHorizontalColor                = "assets/PNG/Blue/Default/slide_horizontal_color.png"
-	slide_horizontal_grey_section_wide  = "assets/PNG/Blue/Default/slide_horizontal_grey_section_wide.png"
-	slide_horizontal_grey_section       = "assets/PNG/Blue/Default/slide_horizontal_grey_section.png"
-	slide_horizontal_grey               = "assets/PNG/Blue/Default/slide_horizontal_grey.png"
-	slide_vertical_color_section_wide   = "assets/PNG/Blue/Default/slide_vertical_color_section_wide.png"
-	slide_vertical_color_section        = "assets/PNG/Blue/Default/slide_vertical_color_section.png"
-	slide_vertical_color                = "assets/PNG/Blue/Default/slide_vertical_color.png"
-	slide_vertical_grey_section_wide    = "assets/PNG/Blue/Default/slide_vertical_grey_section_wide.png"
-	slide_vertical_grey_section         = "assets/PNG/Blue/Default/slide_vertical_grey_section.png"
-	slide_vertical_grey                 = "assets/PNG/Blue/Default/slide_vertical_grey.png"
+	slideHandle          = "assets/PNG/Blue/Default/slide_hangle.png"
+	slideHorizontalColor = "assets/PNG/Blue/Default/slide_horizontal_color.png"
 )
 
 type SliderResources struct {
-	TrackImage  *ebiten.Image
-	HandleImage *ebiten.Image
+	TrackImage  *widget.SliderTrackImage
+	HandleImage *widget.ButtonImage
 }
 
-func CreateSliderResources(fontSet *Fonts) (*SliderResources, error) {
-	track, err := loadEbitenImageFromAsset(slideHorizontalColor)
+func CreateSliderResources() (*SliderResources, error) {
+	track, err := createScalableNineSliceImage(slideHorizontalColor, 96/2, 16/2)
 	if err != nil {
 		return nil, err
 	}
 
-	handle, err := loadEbitenImageFromAsset(slideHandle)
+	handle, err := createScalableNineSliceImageHandle(slideHandle)
 	if err != nil {
 		return nil, err
 	}
 
 	return &SliderResources{
-		TrackImage:  track,
-		HandleImage: handle,
+		TrackImage: &widget.SliderTrackImage{
+			Idle: track,
+		},
+		HandleImage: &widget.ButtonImage{
+			Idle:    handle,
+			Pressed: handle,
+		},
 	}, nil
 }

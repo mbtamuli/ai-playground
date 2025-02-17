@@ -16,11 +16,12 @@ var (
 
 // UIManager handles the UI state and screen switching
 type UIManager struct {
-	currentUI       *ebitenui.UI
-	gameManager     *game.GameManager
-	Fonts           *resources.Fonts
-	ButtonResources *resources.ButtonResources
-	SliderResources *resources.SliderResources
+	currentUI           *ebitenui.UI
+	gameManager         *game.GameManager
+	Fonts               *resources.Fonts
+	ButtonResources     *resources.ButtonResources
+	SliderResources     *resources.SliderResources
+	BackgroundResources *resources.BackgroundResources
 }
 
 // NewUIManager creates a new UI manager instance
@@ -35,16 +36,22 @@ func NewUIManager(gameManager *game.GameManager) *UIManager {
 		panic(err)
 	}
 
-	slider, err := resources.CreateSliderResources(fonts)
+	slider, err := resources.CreateSliderResources()
+	if err != nil {
+		panic(err)
+	}
+
+	background, err := resources.GetBackgroundResource()
 	if err != nil {
 		panic(err)
 	}
 
 	manager := &UIManager{
-		gameManager:     gameManager,
-		Fonts:           fonts,
-		ButtonResources: button,
-		SliderResources: slider,
+		gameManager:         gameManager,
+		Fonts:               fonts,
+		ButtonResources:     button,
+		SliderResources:     slider,
+		BackgroundResources: background,
 	}
 	manager.ShowStartScreen()
 	return manager
