@@ -4,22 +4,27 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/mbtamuli/ai-playground/snake/src/game"
 	"github.com/mbtamuli/ai-playground/snake/src/ui"
 )
 
 // Game represents the main game state
 type SnakePlayground struct {
+	game      *game.Game
 	uiManager *ui.UIManager
 }
 
 // Update handles the game logic updates
 func (g SnakePlayground) Update() error {
+	g.game.Update()
 	g.uiManager.Update()
+
 	return nil
 }
 
 // Draw renders the game screen
 func (g SnakePlayground) Draw(screen *ebiten.Image) {
+	g.game.Draw(screen)
 	g.uiManager.Draw(screen)
 }
 
@@ -39,8 +44,13 @@ func main() {
 	ebiten.SetWindowTitle(windowTitle)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
-	//gameManager := game.NewGame()
+	gameInstance, err := game.NewGame()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	game := &SnakePlayground{
+		game:      gameInstance,
 		uiManager: ui.NewUIManager(),
 	}
 
