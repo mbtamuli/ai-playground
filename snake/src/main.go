@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/mbtamuli/ai-playground/snake/src/game"
 	"github.com/mbtamuli/ai-playground/snake/src/ui"
 )
 
@@ -40,9 +39,9 @@ func main() {
 	ebiten.SetWindowTitle(windowTitle)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
-	gameManager := game.NewGameManager()
+	//gameManager := game.NewGame()
 	game := &SnakePlayground{
-		uiManager: ui.NewUIManager(gameManager),
+		uiManager: ui.NewUIManager(),
 	}
 
 	if err := ebiten.RunGame(game); err != nil {

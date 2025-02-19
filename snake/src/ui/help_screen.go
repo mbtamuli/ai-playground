@@ -7,6 +7,7 @@ import (
 	"github.com/ebitenui/ebitenui"
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
+
 	"github.com/mbtamuli/ai-playground/snake/src/ui/resources"
 )
 

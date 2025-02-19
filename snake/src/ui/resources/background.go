@@ -2,10 +2,12 @@ package resources
 
 import (
 	"github.com/ebitenui/ebitenui/image"
+
+	"github.com/mbtamuli/ai-playground/snake/assets"
 )
 
 const (
-	background = "assets/PNG/Grey/Default/button_square_flat.png"
+	background = "PNG/Grey/Default/button_square_flat.png"
 )
 
 type BackgroundResources struct {
@@ -13,7 +15,7 @@ type BackgroundResources struct {
 }
 
 func GetBackgroundResource() (*BackgroundResources, error) {
-	image, err := createScalableNineSliceImage(background, 64/2, 64/2)
+	image, err := assets.CreateScalableNineSliceImage(background, 64/2, 64/2)
 	if err != nil {
 		return nil, err
 	}

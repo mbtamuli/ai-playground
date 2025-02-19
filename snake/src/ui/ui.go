@@ -6,7 +6,6 @@ import (
 	"github.com/ebitenui/ebitenui"
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/mbtamuli/ai-playground/snake/src/game"
 	"github.com/mbtamuli/ai-playground/snake/src/ui/resources"
 )
 
@@ -16,8 +15,8 @@ var (
 
 // UIManager handles the UI state and screen switching
 type UIManager struct {
-	currentUI           *ebitenui.UI
-	gameManager         *game.GameManager
+	currentUI *ebitenui.UI
+	//gameManager         *game.GameManager
 	Fonts               *resources.Fonts
 	ButtonResources     *resources.ButtonResources
 	SliderResources     *resources.SliderResources
@@ -25,7 +24,7 @@ type UIManager struct {
 }
 
 // NewUIManager creates a new UI manager instance
-func NewUIManager(gameManager *game.GameManager) *UIManager {
+func NewUIManager() *UIManager {
 	fonts, err := resources.SetupFontSystem()
 	if err != nil {
 		panic(err)
@@ -47,7 +46,7 @@ func NewUIManager(gameManager *game.GameManager) *UIManager {
 	}
 
 	manager := &UIManager{
-		gameManager:         gameManager,
+		//gameManager:         gameManager,
 		Fonts:               fonts,
 		ButtonResources:     button,
 		SliderResources:     slider,

@@ -4,8 +4,9 @@ import (
 	"image/color"
 
 	"github.com/ebitenui/ebitenui"
-	eimage "github.com/ebitenui/ebitenui/image"
+	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
+
 	"github.com/mbtamuli/ai-playground/snake/src/ui/resources"
 )
 
@@ -27,7 +28,7 @@ func createStartScreen(manager *UIManager) *ebitenui.UI {
 // createRootContainer creates the main container for the start screen
 func createRootContainer() *widget.Container {
 	return widget.NewContainer(
-		widget.ContainerOpts.BackgroundImage(eimage.NewNineSliceColor(gray)),
+		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(gray)),
 		widget.ContainerOpts.Layout(widget.NewRowLayout(
 			widget.RowLayoutOpts.Direction(widget.DirectionVertical),
 			widget.RowLayoutOpts.Spacing(10),

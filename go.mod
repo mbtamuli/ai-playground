@@ -5,6 +5,7 @@ go 1.24.0
 require (
 	github.com/ebitenui/ebitenui v0.6.0
 	github.com/hajimehoshi/ebiten/v2 v2.8.6
+	github.com/yohamta/donburi v1.15.7
 )
 
 require (

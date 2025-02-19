@@ -5,11 +5,13 @@ import (
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
+
+	"github.com/mbtamuli/ai-playground/snake/assets"
 )
 
 const (
-	idleButton    = "assets/PNG/Extra/Default/button_rectangle_line.png"
-	pressedButton = "assets/PNG/Extra/Default/button_rectangle_depth_line.png"
+	idleButton    = "PNG/Extra/Default/button_rectangle_line.png"
+	pressedButton = "PNG/Extra/Default/button_rectangle_depth_line.png"
 )
 
 // ButtonResources contains all the necessary resources for rendering a button
@@ -23,12 +25,12 @@ type ButtonResources struct {
 // CreateButtonResources creates a new button resources instance with the
 // specified fonts and returns all necessary components for button rendering
 func CreateButtonResources(fontSet *Fonts) (*ButtonResources, error) {
-	idleButtonImage, err := createScalableNineSliceImage(idleButton, 12, 0)
+	idleButtonImage, err := assets.CreateScalableNineSliceImage(idleButton, 12, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	pressedButtonImage, err := createScalableNineSliceImage(pressedButton, 12, 0)
+	pressedButtonImage, err := assets.CreateScalableNineSliceImage(pressedButton, 12, 0)
 	if err != nil {
 		return nil, err
 	}
